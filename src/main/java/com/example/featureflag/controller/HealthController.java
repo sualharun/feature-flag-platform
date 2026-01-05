@@ -3,10 +3,7 @@ package com.example.featureflag.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,32 +48,3 @@ public class HealthController {
     }
 }
 
-/**
- * Custom health indicator for Redis
- */
-@Component
-class RedisHealthIndicator implements HealthIndicator {
-    
-    @Override
-    public Health health() {
-        // In production, check actual Redis connectivity
-        return Health.up()
-                .withDetail("redis", "available")
-                .build();
-    }
-}
-
-/**
- * Custom health indicator for DynamoDB
- */
-@Component
-class DynamoDbHealthIndicator implements HealthIndicator {
-    
-    @Override
-    public Health health() {
-        // In production, check actual DynamoDB connectivity
-        return Health.up()
-                .withDetail("dynamodb", "available")
-                .build();
-    }
-}
