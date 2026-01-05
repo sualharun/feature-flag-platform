@@ -1,0 +1,21 @@
+# Local Development Profile
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    
+aws:
+  region: us-east-1
+  dynamodb:
+    endpoint: http://localhost:8000
+    table-name: feature-flags-local
+    
+logging:
+  level:
+    com.example.featureflag: DEBUG
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,25 @@
+# Production Profile
+spring:
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT:6379}
+    
+aws:
+  region: ${AWS_REGION}
+  dynamodb:
+    table-name: ${DYNAMODB_TABLE_NAME:feature-flags-prod}
+    
+cache:
+  ttl:
+    seconds: 600
+    
+logging:
+  level:
+    root: INFO
+    com.example.featureflag: INFO
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus

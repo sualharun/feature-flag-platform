@@ -1,0 +1,55 @@
+server:
+  port: 8080
+  
+spring:
+  application:
+    name: feature-flag-service
+  profiles:
+    active: local
+    
+# Redis Configuration
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    timeout: 2000ms
+    
+cache:
+  ttl:
+    seconds: 300
+    
+# AWS Configuration
+aws:
+  region: ${AWS_REGION:us-east-1}
+  dynamodb:
+    endpoint: ${DYNAMODB_ENDPOINT:}
+    table-name: ${DYNAMODB_TABLE_NAME:feature-flags}
+    
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.example.featureflag: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+    
+# API Documentation
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true

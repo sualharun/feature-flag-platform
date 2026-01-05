@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: feature-flag-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - feature-flag-network
+
+  # DynamoDB Local
+  dynamodb:
+    image: amazon/dynamodb-local:latest
+    container_name: feature-flag-dynamodb
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ."
+    networks:
+      - feature-flag-network
+    volumes:
+      - dynamodb-data:/home/dynamodblocal
+
+  # Feature Flag Service
+  feature-flag-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: feature-flag-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DYNAMODB_ENDPOINT=http://dynamodb:8000
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+    depends_on:
+      - redis
+      - dynamodb
+    networks:
+      - feature-flag-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  feature-flag-network:
+    driver: bridge
+
+volumes:
+  dynamodb-data:
